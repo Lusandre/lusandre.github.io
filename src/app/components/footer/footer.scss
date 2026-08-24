@@ -1,0 +1,16 @@
+.footer {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f5f5f5; /* Si usas tema claro. Si es oscuro, usa algo como #1e1e1e */
+  margin-top: 60px;
+
+  p {
+    margin: 5px 0;
+    color: #616161;
+  }
+
+  .tech-stack {
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+}
