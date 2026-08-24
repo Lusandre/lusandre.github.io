@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ProjectCard } from '../project-card/project-card';
 import { Project } from '../../models/project.model';
 import { PortfolioDataService } from '../../services/portfolio-data';
@@ -11,13 +11,14 @@ import { PortfolioDataService } from '../../services/portfolio-data';
   styleUrl: './projects.scss',
 })
 export class Projects {
-  projects: Project[] = [];
-
-  // Inyección de dependencias moderna en Angular
+  // 1. Inyección de dependencias moderna
   private portfolioService = inject(PortfolioDataService);
 
+  // 2. Declaramos los proyectos como una Signal fuertemente tipada
+  projects = signal<Project[]>([]);
+
   ngOnInit(): void {
-    // Obtenemos los proyectos al iniciar el componente
-    this.projects = this.portfolioService.getProjects();
+    // 3. Actualizamos el estado de la Signal usando .set()
+    this.projects.set(this.portfolioService.getProjects());
   }
 }

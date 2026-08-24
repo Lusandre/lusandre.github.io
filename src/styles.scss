@@ -36,4 +36,33 @@ body {
   margin: 0;
   height: 100%;
 }
-/* You can add global styles to this file, and also import other style files */
+
+body {
+  background-color: #fafaf9;
+  color: #292524;
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.dark-theme {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.dark-theme mat-card {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+.dark-theme mat-card-subtitle {
+  color: #94a3b8 !important;
+}
+
+.dark-theme mat-toolbar {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-bottom: 1px solid #334155;
+}

@@ -14,6 +14,5 @@ import { MatChipsModule } from '@angular/material/chips';
   styleUrls: ['./project-card.scss'],
 })
 export class ProjectCard {
-  // Recibimos el proyecto desde el componente padre
   @Input() project!: Project;
 }
