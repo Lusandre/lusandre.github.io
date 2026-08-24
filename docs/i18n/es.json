@@ -1,0 +1,9 @@
+{
+  "HERO": {
+    "GREETING": "¡Hola! Mi nombre es",
+    "SUBTITLE": "Desarrollador Full Stack & Frontend.",
+    "DESC": "Especializado en la creación de interfaces web y móviles con Angular e Ionic. Me apasiona construir arquitecturas robustas y escalables, integrando tecnologías como NestJS y bases de datos relacionales para ofrecer soluciones completas y experiencias de usuario impecables.",
+    "CONTACT": "Contáctame",
+    "DOWNLOAD_CV": "Descargar CV"
+  }
+}
