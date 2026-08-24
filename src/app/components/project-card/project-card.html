@@ -1,0 +1,27 @@
+<mat-card class="project-card mat-elevation-z4">
+  <mat-card-header>
+    <div mat-card-avatar class="header-icon">
+      <mat-icon color="primary">{{ project.icon }}</mat-icon>
+    </div>
+    <mat-card-title>{{ project.title }}</mat-card-title>
+    <mat-card-subtitle>{{ project.technologies }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content class="card-content">
+    <p>{{ project.description }}</p>
+
+    <mat-chip-set aria-label="Tecnologías">
+      @for (tag of project.tags; track tag) {
+        <mat-chip>{{ tag }}</mat-chip>
+      }
+    </mat-chip-set>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    @if (project.repoUrl) {
+      <a mat-button color="primary" [href]="project.repoUrl" target="_blank">
+        <mat-icon>code</mat-icon> Ver Código
+      </a>
+    }
+  </mat-card-actions>
+</mat-card>

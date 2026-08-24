@@ -1,0 +1,9 @@
+<section class="projects-section">
+  <h2 class="section-title">Proyectos Destacados</h2>
+
+  <div class="projects-grid">
+    @for (proj of projects; track proj.id) {
+      <app-project-card [project]="proj"></app-project-card>
+    }
+  </div>
+</section>

@@ -1,0 +1,30 @@
+.header-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+
+  span {
+    color: #ff4081; /* Color de acento (rosa/accent por defecto en Material) */
+  }
+}
+
+.nav-links {
+  display: flex;
+  gap: 10px;
+
+  @media (max-width: 600px) {
+    a span {
+      display: none; /* Oculta el texto en móviles, deja solo el ícono */
+    }
+  }
+}
