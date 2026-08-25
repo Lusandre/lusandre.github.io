@@ -1,16 +1,34 @@
 .footer {
   text-align: center;
   padding: 40px 20px;
-  background-color: #f5f5f5; /* Si usas tema claro. Si es oscuro, usa algo como #1e1e1e */
+  background-color: #f5f5f5;
   margin-top: 60px;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+  border-top: 1px solid transparent;
 
   p {
     margin: 5px 0;
     color: #616161;
+    transition: color 0.3s ease;
   }
 
   .tech-stack {
     font-size: 0.85rem;
     font-style: italic;
+  }
+}
+
+:host-context(.dark-theme) .footer {
+  background-color: #0f172a;
+  border-top: 1px solid #334155;
+
+  p {
+    color: #94a3b8;
+  }
+
+  .tech-stack {
+    color: #64748b;
   }
 }

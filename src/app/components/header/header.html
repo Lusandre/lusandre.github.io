@@ -4,22 +4,17 @@
   <span class="spacer"></span>
 
   <div class="nav-links">
+    <!-- Botón Idioma -->
     <button mat-icon-button (click)="toggleLanguage()" aria-label="Cambiar idioma">
       <mat-icon>language</mat-icon>
-      <span style="font-size: 0.5rem; font-weight: bold; margin-left: -7px">
+      <span class="lang-text">
         {{ currentLang() | uppercase }}
       </span>
     </button>
 
+    <!-- Botón Tema -->
     <button mat-icon-button (click)="toggleTheme()" aria-label="Cambiar tema">
       <mat-icon>{{ isDarkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
     </button>
-
-    <a mat-button href="https://github.com/Lusandre" target="_blank">
-      <mat-icon>code</mat-icon> GitHub
-    </a>
-    <a mat-button href="https://linkedin.com/in/lusandre-marcano" target="_blank">
-      <mat-icon>work</mat-icon> LinkedIn
-    </a>
   </div>
 </mat-toolbar>

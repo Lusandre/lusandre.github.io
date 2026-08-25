@@ -4,6 +4,24 @@
     "SUBTITLE": "Desarrollador Full Stack & Frontend.",
     "DESC": "Especializado en la creación de interfaces web y móviles con Angular e Ionic. Me apasiona construir arquitecturas robustas y escalables, integrando tecnologías como NestJS y bases de datos relacionales para ofrecer soluciones completas y experiencias de usuario impecables.",
     "CONTACT": "Contáctame",
+    "VIEW_GITHUB": "Ver GitHub",
+    "VIEW_LINKEDLN": "Ver Linkedln",
     "DOWNLOAD_CV": "Descargar CV"
+  },
+  "PROJECTS": {
+    "SECTION_TITLE": "Proyectos Destacados",
+    "SKILL_SECTION_TITLE": "Habilidades y Tecnologías",
+    "LOGISTICS": {
+      "TITLE": "Sistema de Gestión de Rutas Logísticas",
+      "DESC": "Aplicación web y móvil desarrollada para gestionar itinerarios de conductores de almacén. Integra optimización de rutas mediante mapas, bases de datos relacionales y Edge Functions para asignación en tiempo real."
+    },
+    "RENTAPRO": {
+      "TITLE": "RentAPro Desktop",
+      "DESC": "Aplicación de escritorio para la gestión de..."
+    }
+  },
+  "FOOTER": {
+    "DESIGNED_BY": "Diseñado y construido por Lusandre Marcano © 2026",
+    "BUILT_WITH": "Construido con Angular y Material Design"
   }
 }

@@ -11,23 +11,21 @@ export class PortfolioDataService {
     return [
       {
         id: 1,
-        title: 'Sistema Logístico y Gestión de Rutas',
-        technologies: 'Angular | Ionic | Supabase | Mapbox API',
-        description:
-          'Plataforma web y móvil para optimización de rutas de entrega. Implementa un estricto control de incidencias, bloqueando que un viaje se marque como completado si tiene al menos una guía pendiente o si el conductor regresó con productos dañados que no se resolvieron durante la ruta.',
-        tags: ['Angular', 'Ionic', 'Supabase', 'Edge Functions', 'PostGIS'],
+        title: 'PROJECTS.LOGISTICS.TITLE',
+        description: 'PROJECTS.LOGISTICS.DESC',
+        technologies: 'Angular, Ionic, Supabase, Mapbox API',
+        tags: ['Angular 21', 'Mobile', 'Routing'],
+        repoUrl: 'https://github.com/Lusandre/...',
         icon: 'local_shipping',
-        repoUrl: 'https://github.com/Lusandre',
       },
       {
         id: 2,
-        title: 'RentAPro - Administrador de Viáticos',
-        technologies: 'Angular | NestJS | PostgreSQL | Electron',
-        description:
-          'Aplicación de escritorio offline-first y web para la gestión financiera. Sincroniza una base de datos local SQLite con PostgreSQL. Integra Google Maps API para registrar rutas y duración de viajes de empleados de múltiples empresas.',
-        tags: ['Angular', 'Electron', 'NestJS', 'PostgreSQL', 'SQLite'],
-        icon: 'account_balance_wallet',
-        repoUrl: 'https://github.com/Lusandre',
+        title: 'PROJECTS.RENTAPRO.TITLE',
+        description: 'PROJECTS.RENTAPRO.DESC',
+        technologies: 'Electron, NestJS',
+        tags: ['Desktop', 'Backend'],
+        repoUrl: 'https://github.com/Lusandre/...',
+        icon: 'desktop_windows',
       },
       {
         id: 3,

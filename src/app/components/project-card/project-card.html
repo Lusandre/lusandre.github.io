@@ -3,12 +3,12 @@
     <div mat-card-avatar class="header-icon">
       <mat-icon color="primary">{{ project.icon }}</mat-icon>
     </div>
-    <mat-card-title>{{ project.title }}</mat-card-title>
+    <mat-card-title>{{ project.title | translate }}</mat-card-title>
     <mat-card-subtitle>{{ project.technologies }}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content class="card-content">
-    <p>{{ project.description }}</p>
+    <p>{{ project.description | translate }}</p>
 
     <mat-chip-set aria-label="Tecnologías">
       @for (tag of project.tags; track tag) {
@@ -20,7 +20,8 @@
   <mat-card-actions align="end">
     @if (project.repoUrl) {
       <a mat-button color="primary" [href]="project.repoUrl" target="_blank">
-        <mat-icon>code</mat-icon> Ver Código
+        <mat-icon svgIcon="github"></mat-icon>
+        {{ 'HERO.VIEW_GITHUB' | translate }}
       </a>
     }
   </mat-card-actions>

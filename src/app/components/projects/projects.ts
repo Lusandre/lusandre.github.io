@@ -3,10 +3,11 @@ import { Component, inject, signal } from '@angular/core';
 import { ProjectCard } from '../project-card/project-card';
 import { Project } from '../../models/project.model';
 import { PortfolioDataService } from '../../services/portfolio-data';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-projects',
-  imports: [CommonModule, ProjectCard],
+  imports: [CommonModule, ProjectCard, TranslatePipe],
   templateUrl: './projects.html',
   styleUrl: './projects.scss',
 })

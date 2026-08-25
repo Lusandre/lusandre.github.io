@@ -4,6 +4,7 @@
     <h1 class="name">Lusandre Marcano.</h1>
     <h2 class="subtitle">{{ 'HERO.SUBTITLE' | translate }}</h2>
     <p class="description">{{ 'HERO.DESC' | translate }}</p>
+
     <div class="actions">
       <a
         mat-raised-button
@@ -11,26 +12,38 @@
         href="mailto:lusandremarcano@gmail.com"
         class="action-btn"
       >
-        <mat-icon>mail</mat-icon> Contáctame
+        <mat-icon>mail</mat-icon> {{ 'HERO.CONTACT' | translate }}
       </a>
+
       <a
-        mat-stroked-button
+        mat-raised-button
         color="primary"
         href="https://github.com/Lusandre"
         target="_blank"
         class="action-btn"
       >
-        Ver GitHub
+        <mat-icon svgIcon="github"></mat-icon> {{ 'HERO.VIEW_GITHUB' | translate }}
       </a>
 
       <a
-        mat-stroked-button
+        mat-raised-button
+        color="primary"
+        href="https://linkedin.com/in/lusandre-marcano"
+        target="_blank"
+        class="action-btn"
+      >
+        <mat-icon svgIcon="linkedin"></mat-icon>
+        <span class="btn-text">{{ 'HERO.VIEW_LINKEDLN' | translate }}</span>
+      </a>
+
+      <a
+        mat-raised-button
         color="accent"
         href="Lusandre_marcano_cv.pdf"
         download="Lusandre_marcano_cv.pdf"
         class="action-btn"
       >
-        <mat-icon>picture_as_pdf</mat-icon> Descargar CV
+        <mat-icon>picture_as_pdf</mat-icon> {{ 'HERO.DOWNLOAD_CV' | translate }}
       </a>
     </div>
   </div>
