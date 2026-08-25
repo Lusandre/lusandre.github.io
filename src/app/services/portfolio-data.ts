@@ -15,7 +15,7 @@ export class PortfolioDataService {
         description: 'PROJECTS.LOGISTICS.DESC',
         technologies: 'Angular, Ionic, Supabase, Mapbox API',
         tags: ['Angular 21', 'Mobile', 'Routing'],
-        repoUrl: 'https://github.com/Lusandre/...',
+        repoUrl: 'https://github.com/Lusandre',
         icon: 'local_shipping',
       },
       {
@@ -24,18 +24,15 @@ export class PortfolioDataService {
         description: 'PROJECTS.RENTAPRO.DESC',
         technologies: 'Electron, NestJS',
         tags: ['Desktop', 'Backend'],
-        repoUrl: 'https://github.com/Lusandre/...',
         icon: 'desktop_windows',
       },
       {
         id: 3,
-        title: 'Plataforma e-Commerce Mayorista',
+        title: 'PROJECTS.MARKETPLACE.TITLE',
+        description: 'PROJECTS.MARKETPLACE.DESC',
         technologies: 'Angular | Node.js | MongoDB',
-        description:
-          'Portal de ventas B2B especializado en productos capilares. Incluye gestión de inventario, carrito de compras personalizado y autenticación de usuarios, con una interfaz limpia enfocada en compradores mayoristas.',
         tags: ['Angular', 'Node.js', 'MongoDB', 'Express'],
         icon: 'shopping_cart',
-        repoUrl: 'https://github.com/Lusandre',
       },
     ];
   }

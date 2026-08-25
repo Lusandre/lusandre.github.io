@@ -5,7 +5,7 @@ export interface Project {
   technologies: string;
   description: string;
   tags: string[];
-  icon: string; // Para usar íconos de Material (ej: 'local_shipping')
+  icon: string;
   repoUrl?: string;
   liveUrl?: string;
 }

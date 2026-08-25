@@ -17,7 +17,11 @@
     },
     "RENTAPRO": {
       "TITLE": "RentAPro Desktop",
-      "DESC": "Aplicación de escritorio para la gestión de..."
+      "DESC": "Aplicación de escritorio desarrollada para un cliente corporativo, enfocada en la gestión integral de operaciones comerciales. Construida con NestJS y Electron, cuenta con una arquitectura escalable para el manejo de inventario y optimización de procesos internos. Al ser software propietario, el código fuente es confidencial."
+    },
+    "MARKETPLACE": {
+      "TITLE": "E-Commerce Mayorista Capilar (Proyecto Privado)",
+      "DESC": "Plataforma B2B (Business to Business) diseñada para la distribución y venta al mayor de productos de belleza. Desarrollada con Angular y Node.js, optimizando la experiencia de usuario (UX) para compras por volumen, gestión de catálogos dinámicos y procesamiento de pedidos empresariales."
     }
   },
   "FOOTER": {
