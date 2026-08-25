@@ -17,7 +17,11 @@
     },
     "RENTAPRO": {
       "TITLE": "RentAPro Desktop",
-      "DESC": "Desktop application for the management of..."
+      "DESC": "Desktop application developed for a corporate client, focused on the comprehensive management of business operations. Built with NestJS and Electron, it features a scalable architecture for inventory management and the optimization of internal processes. As proprietary software, the source code is confidential."
+    },
+    "MARKETPLACE": {
+      "TITLE": "Wholesale Hair Care E-Commerce (Private Project)",
+      "DESC": "B2B (Business to Business) platform designed for the distribution and wholesale of beauty products. Developed with Angular and Node.js, optimizing the user experience (UX) for bulk purchases, dynamic catalog management, and enterprise order processing."
     }
   },
   "FOOTER": {
