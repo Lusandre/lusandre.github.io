@@ -1,11 +1,23 @@
 <section class="projects-section">
   <h2 class="section-title">{{ 'PROJECTS.SECTION_TITLE' | translate }}</h2>
 
+  <div class="filter-container">
+    <mat-button-toggle-group
+      [value]="filter()"
+      (change)="filter.set($event.value)"
+      aria-label="Filtrar Proyectos"
+      class="filter-toggle"
+    >
+      <mat-button-toggle value="all">Todos ({{ portfolioService.projects().length }})</mat-button-toggle>
+      <mat-button-toggle value="featured">Destacados</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
   <div class="projects-grid">
-    @for (proj of projects(); track proj.id) {
+    @for (proj of filteredProjects(); track proj.id || proj.slug) {
       <app-project-card [project]="proj"></app-project-card>
     } @empty {
-      <p style="text-align: center; grid-column: 1 / -1">Cargando proyectos...</p>
+      <p class="empty-text">No hay proyectos disponibles.</p>
     }
   </div>
 </section>

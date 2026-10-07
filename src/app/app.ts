@@ -10,9 +10,23 @@ import { TranslateService } from '@ngx-translate/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 
+import { DynamicBackground } from './components/dynamic-background/dynamic-background';
+import { AdminPanel } from './components/admin-panel/admin-panel';
+import { ThemeService } from './services/theme.service';
+
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, Projects, Header, Hero, Footer, Skills],
+  imports: [
+    RouterOutlet,
+    CommonModule,
+    Projects,
+    Header,
+    Hero,
+    Footer,
+    Skills,
+    DynamicBackground,
+    AdminPanel,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -22,6 +36,7 @@ export class App {
 
   private matIconRegistry = inject(MatIconRegistry);
   private domSanitizer = inject(DomSanitizer);
+  private themeService = inject(ThemeService);
 
   constructor() {
     this.translate.use('es');

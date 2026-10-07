@@ -1,28 +1,125 @@
-<mat-card class="project-card mat-elevation-z4">
-  <mat-card-header>
-    <div mat-card-avatar class="header-icon">
-      <mat-icon color="primary">{{ project.icon }}</mat-icon>
+<div class="project-card">
+  <!-- 1. Barra Superior: Icono y Badge Destacado -->
+  <div class="card-top-bar">
+    <div class="icon-avatar">
+      <mat-icon>{{ project().icon || 'code' }}</mat-icon>
     </div>
-    <mat-card-title>{{ project.title | translate }}</mat-card-title>
-    <mat-card-subtitle>{{ project.technologies }}</mat-card-subtitle>
-  </mat-card-header>
-
-  <mat-card-content class="card-content">
-    <p>{{ project.description | translate }}</p>
-
-    <mat-chip-set aria-label="Tecnologías">
-      @for (tag of project.tags; track tag) {
-        <mat-chip>{{ tag }}</mat-chip>
-      }
-    </mat-chip-set>
-  </mat-card-content>
-
-  <mat-card-actions align="end">
-    @if (project.repoUrl) {
-      <a mat-button color="primary" [href]="project.repoUrl" target="_blank">
-        <mat-icon svgIcon="github"></mat-icon>
-        {{ 'HERO.VIEW_GITHUB' | translate }}
-      </a>
+    @if (project().is_featured) {
+      <span class="featured-badge">⭐ Destacado</span>
     }
-  </mat-card-actions>
-</mat-card>
+  </div>
+
+  <!-- 2. Título Completo (Sin cortes, 100% visible) -->
+  <div class="card-title-container">
+    <h3 class="project-title">{{ title() }}</h3>
+  </div>
+
+  <!-- 3. Galería de Imágenes O Banner Gráfico Decorativo (Evita cualquier vacío) -->
+  @if (images().length > 0) {
+    <div class="project-image-container">
+      <img
+        [src]="images()[currentImageIndex()]"
+        [alt]="title()"
+        class="project-cover-img"
+        loading="lazy"
+      />
+
+      @if (images().length > 1) {
+        <button
+          type="button"
+          class="carousel-nav-btn prev"
+          (click)="prevImage($event)"
+          aria-label="Imagen anterior"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <button
+          type="button"
+          class="carousel-nav-btn next"
+          (click)="nextImage($event)"
+          aria-label="Imagen siguiente"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+
+        <div class="carousel-dots">
+          @for (img of images(); track $index) {
+            <button
+              type="button"
+              class="dot"
+              [class.active]="$index === currentImageIndex()"
+              (click)="setImage($index, $event)"
+              [attr.aria-label]="'Ir a imagen ' + ($index + 1)"
+            ></button>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- Banner decorativo abstracto cuando el proyecto no tiene fotos -->
+    <div class="project-placeholder-banner">
+      <div class="placeholder-grid-pattern"></div>
+      <mat-icon class="placeholder-watermark">{{ project().icon || 'terminal' }}</mat-icon>
+      <div class="placeholder-pill">
+        <mat-icon>{{ project().icon || 'code' }}</mat-icon>
+        <span>Proyecto & Código</span>
+      </div>
+    </div>
+  }
+
+  <!-- 4. Contenido Central (Descripción) -->
+  <div class="card-body">
+    <p class="project-desc">{{ description() }}</p>
+  </div>
+
+  <!-- 5. Tecnologías Utilizadas (Píldoras organizadas y compactas) -->
+  @if (project().technologies && project().technologies!.length > 0) {
+    <div class="tech-section">
+      <div class="tech-chips-wrapper">
+        @for (tech of project().technologies!; track tech.id || tech.name) {
+          <div class="tech-chip">
+            @if (tech.icon_url) {
+              <img [src]="tech.icon_url" [alt]="tech.name" class="tech-icon-img" />
+            }
+            <span class="tech-label">{{ tech.name }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- 6. Barra Inferior de Enlaces (1 sola línea, compacta, elegante y no gigante) -->
+  @if (links().length > 0) {
+    <div class="card-footer-actions">
+      <div class="actions-single-line">
+        @for (link of links(); track $index) {
+          @if (getLinkDetails(link).svgIcon) {
+            <a
+              mat-stroked-button
+              [href]="link.url"
+              target="_blank"
+              class="link-action-btn github-btn"
+              [title]="link.title || getLinkDetails(link).defaultLabel"
+            >
+              <mat-icon [svgIcon]="getLinkDetails(link).svgIcon!"></mat-icon>
+              <span class="btn-text-compact">{{ link.title || getLinkDetails(link).defaultLabel }}</span>
+            </a>
+          } @else {
+            <a
+              mat-raised-button
+              [color]="link.type === 'youtube' ? 'warn' : (link.type === 'live' ? 'primary' : 'accent')"
+              [href]="link.url"
+              target="_blank"
+              class="link-action-btn primary-action-btn"
+              [title]="link.title || getLinkDetails(link).defaultLabel"
+            >
+              <mat-icon>{{ getLinkDetails(link).icon }}</mat-icon>
+              <span class="btn-text-compact">{{ link.title || getLinkDetails(link).defaultLabel }}</span>
+            </a>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

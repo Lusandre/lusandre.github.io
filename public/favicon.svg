@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1329" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+
+    <!-- Cyan Neon Gradient -->
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0ea5e9" />
+    </linearGradient>
+
+    <!-- Violet / Pink Gradient -->
+    <linearGradient id="violetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle Base with Glow Border -->
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#bgGrad)" stroke="#38bdf8" stroke-width="2.5" />
+
+  <!-- Code Bracket Left: < -->
+  <path d="M 18 20 L 8 32 L 18 44" fill="none" stroke="url(#cyanGrad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Monogram Letter: L -->
+  <path d="M 27 18 L 27 46 L 41 46" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Glowing Particle Orbit Dot -->
+  <circle cx="41" cy="20" r="4.5" fill="#38bdf8" />
+
+  <!-- Code Bracket Right: > -->
+  <path d="M 46 20 L 56 32 L 46 44" fill="none" stroke="url(#violetGrad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

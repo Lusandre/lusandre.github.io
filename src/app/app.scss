@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  position: relative;
+  min-height: 100vh;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+app-header,
+app-footer {
+  position: relative;
+  z-index: 2;
+}

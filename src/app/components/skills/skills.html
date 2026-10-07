@@ -1,11 +1,16 @@
 <section class="skills-section">
   <h2 class="section-title">{{ 'PROJECTS.SKILL_SECTION_TITLE' | translate }}</h2>
 
-  <div class="chips-container">
-    <mat-chip-set aria-label="Habilidades Técnicas">
-      @for (skill of skills; track skill) {
-        <mat-chip class="custom-chip">{{ skill }}</mat-chip>
-      }
-    </mat-chip-set>
+  <div class="skills-wrapper">
+    @for (skill of skills(); track skill.id || skill.name) {
+      <div class="skill-item-chip">
+        @if (skill.icon_url) {
+          <img [src]="skill.icon_url" [alt]="skill.name" class="skill-icon" />
+        }
+        <span class="skill-text">{{ skill.name }}</span>
+      </div>
+    } @empty {
+      <p class="loading-text">Cargando habilidades...</p>
+    }
   </div>
 </section>

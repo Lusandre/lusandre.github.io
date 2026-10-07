@@ -1,0 +1,64 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+# Permisos requeridos para desplegar en GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Permite una sola implementación simultánea
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Inyectar variables de entorno (Supabase)
+        run: |
+          mkdir -p src/environments
+          cat << 'EOF' > src/environments/environment.ts
+          export const environment = {
+            production: true,
+            supabaseUrl: '${{ secrets.SUPABASE_URL || 'https://isagsykseeyemjuhxpby.supabase.co' }}',
+            supabaseAnonKey: '${{ secrets.SUPABASE_ANON_KEY || 'sb_publishable_wqQa1SBomIqg8Uh_tzMHdw_s7b1uIut' }}',
+          };
+          EOF
+
+      - name: Compilar aplicación Angular
+        run: npm run build
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Subir artefacto de compilación
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs'
+
+      - name: Desplegar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

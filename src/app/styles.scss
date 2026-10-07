@@ -1,0 +1,229 @@
+@use '@angular/material' as mat;
+
+:root {
+  --brand-primary: #3b82f6;
+  --brand-primary-dark: #38bdf8;
+  --brand-accent: #8b5cf6;
+  --brand-accent-dark: #a855f7;
+
+  --header-bg-light: rgba(250, 250, 249, 0.75);
+  --header-bg-dark: rgba(15, 23, 42, 0.75);
+  --header-blur: 14px;
+
+  --skills-chip-bg-light: rgba(255, 255, 255, 0.50);
+  --skills-chip-bg-dark: rgba(30, 41, 59, 0.50);
+  --skills-chip-blur: 12px;
+
+  --projects-card-bg-light: rgba(255, 255, 255, 0.92);
+  --projects-card-bg-dark: rgba(30, 41, 59, 0.92);
+  --projects-card-blur: 8px;
+  --projects-card-shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --projects-card-shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.35);
+
+  --footer-bg-light: rgba(245, 245, 245, 0.65);
+  --footer-bg-dark: rgba(15, 23, 42, 0.65);
+  --footer-blur: 14px;
+
+  --btn-border-radius: 8px;
+  --btn-glow-light: rgba(59, 130, 246, 0.4);
+  --btn-glow-dark: rgba(56, 189, 248, 0.5);
+  --btn-accent-glow-light: rgba(139, 92, 246, 0.45);
+  --btn-accent-glow-dark: rgba(168, 85, 247, 0.55);
+}
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+body {
+  color-scheme: light;
+  background-color: #fafaf9;
+  color: #292524;
+  margin: 0;
+  height: 100%;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.dark-theme {
+  color-scheme: dark;
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+/* ==========================================================
+   GLOBAL BUTTON & LINK BUTTON STYLES & MICRO-INTERACTIONS
+   ========================================================== */
+
+/* 1. Botones Primarios (Raised) */
+.mat-mdc-raised-button.mat-primary,
+button[mat-raised-button][color="primary"],
+a[mat-raised-button][color="primary"],
+button[mat-raised-button]:not([color="accent"]):not([color="warn"]),
+a[mat-raised-button]:not([color="accent"]):not([color="warn"]) {
+  background-color: var(--brand-primary) !important;
+  color: #ffffff !important;
+  border-radius: var(--btn-border-radius) !important;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease !important;
+  box-shadow: 0 4px 14px var(--btn-glow-light) !important;
+  text-decoration: none !important;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 22px var(--btn-glow-light) !important;
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+.dark-theme .mat-mdc-raised-button.mat-primary,
+.dark-theme button[mat-raised-button][color="primary"],
+.dark-theme a[mat-raised-button][color="primary"],
+.dark-theme button[mat-raised-button]:not([color="accent"]):not([color="warn"]),
+.dark-theme a[mat-raised-button]:not([color="accent"]):not([color="warn"]) {
+  background-color: var(--brand-primary-dark) !important;
+  color: #0f172a !important;
+  font-weight: 600;
+  box-shadow: 0 4px 16px var(--btn-glow-dark) !important;
+
+  &:hover {
+    box-shadow: 0 8px 26px var(--btn-glow-dark) !important;
+  }
+}
+
+/* 2. Botón de Descarga CV & Botones de Acento (Raised Accent) */
+.mat-mdc-raised-button.mat-accent,
+button[mat-raised-button][color="accent"],
+a[mat-raised-button][color="accent"],
+.action-btn.cv-btn {
+  background-color: var(--brand-accent) !important;
+  color: #ffffff !important;
+  border-radius: var(--btn-border-radius) !important;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease !important;
+  box-shadow: 0 4px 14px var(--btn-accent-glow-light) !important;
+  text-decoration: none !important;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 24px var(--btn-accent-glow-light) !important;
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+.dark-theme .mat-mdc-raised-button.mat-accent,
+.dark-theme button[mat-raised-button][color="accent"],
+.dark-theme a[mat-raised-button][color="accent"],
+.dark-theme .action-btn.cv-btn {
+  background-color: var(--brand-accent-dark) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 4px 16px var(--btn-accent-glow-dark) !important;
+
+  &:hover {
+    box-shadow: 0 8px 28px var(--btn-accent-glow-dark) !important;
+  }
+}
+
+/* 3. Botones Stroked / Outlined */
+button[mat-stroked-button],
+a[mat-stroked-button] {
+  border-radius: var(--btn-border-radius) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+  text-decoration: none !important;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--brand-primary) !important;
+    background-color: rgba(59, 130, 246, 0.08) !important;
+    box-shadow: 0 4px 12px var(--btn-glow-light) !important;
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+.dark-theme button[mat-stroked-button],
+.dark-theme a[mat-stroked-button] {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #f8fafc !important;
+
+  &:hover {
+    border-color: var(--brand-primary-dark) !important;
+    background-color: rgba(56, 189, 248, 0.12) !important;
+    box-shadow: 0 4px 14px var(--btn-glow-dark) !important;
+  }
+}
+
+/* 4. Botones Flat / Standard */
+button[mat-button],
+a[mat-button] {
+  border-radius: var(--btn-border-radius) !important;
+  transition: transform 0.2s ease, background 0.2s ease !important;
+  text-decoration: none !important;
+
+  &:hover {
+    transform: translateY(-1px);
+    background-color: rgba(59, 130, 246, 0.08) !important;
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+.dark-theme button[mat-button],
+.dark-theme a[mat-button] {
+  color: #f8fafc !important;
+
+  &:hover {
+    background-color: rgba(56, 189, 248, 0.12) !important;
+  }
+}
+
+/* 5. Botones Icon */
+button[mat-icon-button],
+a[mat-icon-button] {
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease !important;
+
+  &:hover {
+    transform: scale(1.12);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+.dark-theme mat-card {
+  background-color: var(--projects-card-bg-dark) !important;
+  color: #f8fafc !important;
+}
+
+.dark-theme mat-card-subtitle {
+  color: #94a3b8 !important;
+}
+
+.dark-theme mat-toolbar {
+  background-color: var(--header-bg-dark) !important;
+  color: #f8fafc !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}

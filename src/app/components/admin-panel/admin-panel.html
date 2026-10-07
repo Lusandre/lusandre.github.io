@@ -1,0 +1,1137 @@
+<!-- Botón flotante para abrir el panel de administración -->
+<div class="admin-floating-btn-container">
+  <button
+    mat-mini-fab
+    color="primary"
+    class="admin-trigger-btn"
+    (click)="toggleOpen()"
+    title="Panel de Administración"
+    aria-label="Abrir Administrador"
+  >
+    <mat-icon>{{ supabaseService.isAuthenticated() ? 'admin_panel_settings' : 'lock' }}</mat-icon>
+  </button>
+</div>
+
+<!-- Modal Overlay del Panel de Administración -->
+@if (isOpen()) {
+  <div class="admin-overlay" (click)="toggleOpen()">
+    <div class="admin-modal-card" (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="header-title">
+          <mat-icon color="primary">settings</mat-icon>
+          <h2>Administrador del Portafolio</h2>
+        </div>
+        <div class="header-actions">
+          @if (supabaseService.isAuthenticated()) {
+            <button mat-stroked-button color="warn" (click)="logout()" class="logout-btn">
+              <mat-icon>logout</mat-icon> Cerrar Sesión
+            </button>
+          }
+          <button mat-icon-button (click)="toggleOpen()" aria-label="Cerrar">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback Messages -->
+      @if (errorMessage()) {
+        <div class="alert-box error">
+          <mat-icon>error</mat-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+      @if (successMessage()) {
+        <div class="alert-box success">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ successMessage() }}</span>
+        </div>
+      }
+
+      <!-- Vista 1: Login de Autenticación Supabase -->
+      @if (!supabaseService.isAuthenticated()) {
+        <div class="login-view">
+          <p class="login-desc">Ingresa tus credenciales de administrador para gestionar los datos de Supabase.</p>
+          
+          <div class="form-group">
+            <label>Correo Electrónico</label>
+            <input type="email" [(ngModel)]="loginEmail" class="custom-input" placeholder="admin@ejemplo.com" />
+          </div>
+
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" [(ngModel)]="loginPassword" class="custom-input" placeholder="••••••••" (keyup.enter)="login()" />
+          </div>
+
+          <button mat-raised-button color="primary" class="full-btn" (click)="login()" [disabled]="isBusy()">
+            @if (isBusy()) {
+              <span>Cargando...</span>
+            } @else {
+              <ng-container>
+                <mat-icon>login</mat-icon>
+                <span>Ingresar al Administrador</span>
+              </ng-container>
+            }
+          </button>
+        </div>
+      } @else {
+        <!-- Vista 2: Panel de Gestión con Pestañas -->
+        <mat-tab-group animationDuration="200ms" class="admin-tabs">
+          
+          <!-- TAB 1: PROYECTOS -->
+          <mat-tab label="Proyectos ({{ portfolioData.projects().length }})">
+            <div class="tab-content">
+              @if (!isEditingProject()) {
+                <div class="tab-header-action">
+                  <p>Gestiona los proyectos que se mostrarán en la galería.</p>
+                  <button mat-raised-button color="primary" (click)="startNewProject()">
+                    <mat-icon>add</mat-icon> Nuevo Proyecto
+                  </button>
+                </div>
+
+                <div class="items-list">
+                  @for (proj of portfolioData.projects(); track proj.id) {
+                    <div class="item-row">
+                      <div class="item-info">
+                        <div class="item-title-wrap">
+                          <strong>{{ proj.title_es }}</strong>
+                          @if (proj.is_featured) {
+                            <span class="badge featured">Destacado</span>
+                          }
+                        </div>
+                        <span class="item-sub">
+                          {{ proj.slug }} • {{ proj.images?.length || (proj.image_url ? 1 : 0) }} imágenes • {{ proj.links?.length || 0 }} enlaces
+                        </span>
+                      </div>
+                      <div class="item-actions">
+                        <button mat-icon-button color="primary" (click)="editProject(proj)" title="Editar">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="deleteProject(proj.id)" title="Eliminar">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                    </div>
+                  } @empty {
+                    <div class="empty-state">No hay proyectos registrados en Supabase. Crea el primero arriba.</div>
+                  }
+                </div>
+              } @else {
+                <!-- Formulario de Edición/Creación de Proyecto -->
+                <div class="editor-form">
+                  <h3>{{ editingProject.id ? 'Editar Proyecto' : 'Crear Nuevo Proyecto' }}</h3>
+
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label>Slug (Identificador único)</label>
+                      <input type="text" [(ngModel)]="editingProject.slug" class="custom-input" placeholder="ej. sistema-rutas" />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Icono (Material Icon)</label>
+                      <input type="text" [(ngModel)]="editingProject.icon" class="custom-input" placeholder="ej. local_shipping, code" />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Título (Español)</label>
+                      <input type="text" [(ngModel)]="editingProject.title_es" class="custom-input" placeholder="Título en español" />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Título (Inglés)</label>
+                      <input type="text" [(ngModel)]="editingProject.title_en" class="custom-input" placeholder="Title in English" />
+                    </div>
+
+                    <div class="form-group full-width">
+                      <label>Descripción (Español)</label>
+                      <textarea [(ngModel)]="editingProject.description_es" rows="3" class="custom-input"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                      <label>Descripción (Inglés)</label>
+                      <textarea [(ngModel)]="editingProject.description_en" rows="3" class="custom-input"></textarea>
+                    </div>
+
+                    <!-- SECCIÓN: IMÁGENES & STORAGE DRAG-AND-DROP -->
+                    <div class="form-group full-width upload-section">
+                      <label class="section-label">
+                        <mat-icon>collections</mat-icon> Galería de Imágenes (Arrastra o Selecciona)
+                      </label>
+
+                      <!-- Drop Zone -->
+                      <div
+                        class="drop-zone"
+                        (dragover)="onDragOver($event)"
+                        (drop)="onFilesDropped($event)"
+                      >
+                        <input
+                          type="file"
+                          #fileInput
+                          multiple
+                          accept="image/*"
+                          style="display: none"
+                          (change)="onFilesSelected($event)"
+                        />
+                        <div class="drop-zone-content">
+                          <mat-icon class="drop-icon">cloud_upload</mat-icon>
+                          <p>Arrastra y suelta tus imágenes aquí o</p>
+                          <button
+                            type="button"
+                            mat-stroked-button
+                            color="primary"
+                            (click)="fileInput.click()"
+                            [disabled]="isUploading()"
+                          >
+                            <mat-icon>folder_open</mat-icon>
+                            {{ isUploading() ? 'Subiendo a Supabase...' : 'Examinar Archivos' }}
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Manual URL input -->
+                      <div class="manual-url-row">
+                        <input
+                          type="text"
+                          [(ngModel)]="manualImageUrl"
+                          class="custom-input flex-1"
+                          placeholder="O escribe una URL de imagen externa..."
+                        />
+                        <button type="button" mat-button color="primary" (click)="addManualImage()">
+                          <mat-icon>add_photo_alternate</mat-icon> Agregar URL
+                        </button>
+                      </div>
+
+                      <!-- Previews Grid -->
+                      @if (projectImages.length > 0) {
+                        <div class="thumbnails-grid">
+                          @for (imgUrl of projectImages; track $index) {
+                            <div class="thumb-card" [class.is-cover]="$index === 0">
+                              <img [src]="imgUrl" alt="Thumbnail" />
+                              @if ($index === 0) {
+                                <span class="cover-badge">Portada</span>
+                              } @else {
+                                <button
+                                  type="button"
+                                  class="cover-action-btn"
+                                  (click)="setAsCover($index)"
+                                  title="Hacer Portada"
+                                >
+                                  ⭐ Portada
+                                </button>
+                              }
+                              <button
+                                type="button"
+                                class="thumb-delete-btn"
+                                (click)="removeImage($index)"
+                                title="Eliminar Imagen"
+                              >
+                                <mat-icon>delete</mat-icon>
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+
+                    <!-- SECCIÓN: ENLACES DINÁMICOS CON DETECCIÓN -->
+                    <div class="form-group full-width links-section">
+                      <div class="links-header">
+                        <label class="section-label">
+                          <mat-icon>link</mat-icon> Enlaces del Proyecto (GitHub, YouTube, Web, Figma, etc.)
+                        </label>
+                        <button type="button" mat-stroked-button color="primary" (click)="addLink()">
+                          <mat-icon>add</mat-icon> Agregar Enlace
+                        </button>
+                      </div>
+
+                      <div class="links-list">
+                        @for (link of projectLinks; track $index) {
+                          <div class="link-item-row">
+                            <div class="link-type-preview">
+                              <mat-icon>{{ getLinkInfo(link.url).icon }}</mat-icon>
+                              <span class="type-pill">{{ getLinkInfo(link.url).defaultLabel }}</span>
+                            </div>
+
+                            <input
+                              type="text"
+                              [(ngModel)]="link.url"
+                              (ngModelChange)="onLinkUrlChange(link)"
+                              class="custom-input link-url-input"
+                              placeholder="https://..."
+                            />
+
+                            <input
+                              type="text"
+                              [(ngModel)]="link.title"
+                              class="custom-input link-title-input"
+                              placeholder="Texto del botón (ej. Ver Demo)"
+                            />
+
+                            <button
+                              type="button"
+                              mat-icon-button
+                              color="warn"
+                              (click)="removeLink($index)"
+                              title="Eliminar enlace"
+                            >
+                              <mat-icon>delete</mat-icon>
+                            </button>
+                          </div>
+                        } @empty {
+                          <p class="empty-links-text">No hay enlaces agregados aún. Agrega el primero con el botón de arriba.</p>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- SECCIÓN: TECNOLOGÍAS & DETALLES -->
+                    <div class="form-group full-width">
+                      <label>Tecnologías Utilizadas</label>
+                      <mat-select [(ngModel)]="selectedTechIds" multiple class="custom-select">
+                        @for (tech of portfolioData.skills(); track tech.id) {
+                          <mat-option [value]="tech.id">{{ tech.name }}</mat-option>
+                        }
+                      </mat-select>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                      <mat-checkbox [(ngModel)]="editingProject.is_featured">Marcar como Proyecto Destacado</mat-checkbox>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Orden de visualización</label>
+                      <input type="number" [(ngModel)]="editingProject.display_order" class="custom-input" />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button mat-button (click)="cancelProjectEdit()" [disabled]="isBusy() || isUploading()">Cancelar</button>
+                    <button mat-raised-button color="primary" (click)="saveProject()" [disabled]="isBusy() || isUploading()">
+                      <mat-icon>save</mat-icon> Guardar Proyecto
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </mat-tab>
+
+          <!-- TAB 2: HABILIDADES Y TECNOLOGÍAS -->
+          <mat-tab label="Habilidades ({{ portfolioData.skills().length }})">
+            <div class="tab-content">
+              @if (!isEditingTech()) {
+                <div class="tab-header-action">
+                  <p>Gestiona las tecnologías y habilidades técnicas.</p>
+                  <button mat-raised-button color="primary" (click)="startNewTech()">
+                    <mat-icon>add</mat-icon> Nueva Tecnología
+                  </button>
+                </div>
+
+                <div class="items-list">
+                  @for (tech of portfolioData.skills(); track tech.id) {
+                    <div class="item-row">
+                      <div class="item-info">
+                        <strong>{{ tech.name }}</strong>
+                        <span class="item-sub">{{ tech.category || 'General' }} • Orden: {{ tech.display_order }}</span>
+                      </div>
+                      <div class="item-actions">
+                        <button mat-icon-button color="primary" (click)="editTech(tech)" title="Editar">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="deleteTech(tech.id)" title="Eliminar">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                    </div>
+                  } @empty {
+                    <div class="empty-state">No hay tecnologías registradas en Supabase.</div>
+                  }
+                </div>
+              } @else {
+                <div class="editor-form">
+                  <h3>{{ editingTech.id ? 'Editar Tecnología' : 'Nueva Tecnología' }}</h3>
+
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label>Nombre de la Tecnología</label>
+                      <input type="text" [(ngModel)]="editingTech.name" class="custom-input" placeholder="ej. Angular, Node.js" />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Categoría</label>
+                      <input type="text" [(ngModel)]="editingTech.category" class="custom-input" placeholder="Frontend, Backend, Database" />
+                    </div>
+
+                    <div class="form-group full-width">
+                      <label>URL del Icono (SVG / PNG)</label>
+                      <input type="text" [(ngModel)]="editingTech.icon_url" class="custom-input" placeholder="https://..." />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Orden de Visualización</label>
+                      <input type="number" [(ngModel)]="editingTech.display_order" class="custom-input" />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button mat-button (click)="cancelTechEdit()" [disabled]="isBusy()">Cancelar</button>
+                    <button mat-raised-button color="primary" (click)="saveTech()" [disabled]="isBusy()">
+                      <mat-icon>save</mat-icon> Guardar Tecnología
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </mat-tab>
+
+          <!-- TAB 3: PERFIL & ENLACES -->
+          <mat-tab label="Perfil & Enlaces">
+            <div class="tab-content">
+              <div class="editor-form">
+                <p class="tab-subtitle">Edita tu información personal, descripciones bilingües y enlaces de contacto.</p>
+
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" [(ngModel)]="profileForm.full_name" class="custom-input" />
+                  </div>
+
+                  <div class="form-group">
+                    <label>Email de Contacto</label>
+                    <input type="email" [(ngModel)]="profileForm.email" class="custom-input" />
+                  </div>
+
+                  <div class="form-group">
+                    <label>Saludo (Español)</label>
+                    <input type="text" [(ngModel)]="profileForm.greeting_es" class="custom-input" />
+                  </div>
+
+                  <div class="form-group">
+                    <label>Saludo (Inglés)</label>
+                    <input type="text" [(ngModel)]="profileForm.greeting_en" class="custom-input" />
+                  </div>
+
+                  <div class="form-group">
+                    <label>Subtítulo / Rol (Español)</label>
+                    <input type="text" [(ngModel)]="profileForm.subtitle_es" class="custom-input" />
+                  </div>
+
+                  <div class="form-group">
+                    <label>Subtítulo / Rol (Inglés)</label>
+                    <input type="text" [(ngModel)]="profileForm.subtitle_en" class="custom-input" />
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label>Biografía / Descripción (Español)</label>
+                    <textarea [(ngModel)]="profileForm.bio_es" rows="3" class="custom-input"></textarea>
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label>Biografía / Descripción (Inglés)</label>
+                    <textarea [(ngModel)]="profileForm.bio_en" rows="3" class="custom-input"></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label>URL GitHub</label>
+                    <input type="text" [(ngModel)]="profileForm.github_url" class="custom-input" />
+                  </div>
+
+                  <div class="form-group">
+                    <label>URL LinkedIn</label>
+                    <input type="text" [(ngModel)]="profileForm.linkedin_url" class="custom-input" />
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label>Archivo CV / PDF (Enlace o Subida Directa)</label>
+                    <div class="manual-url-row">
+                      <input type="text" [(ngModel)]="profileForm.cv_url" class="custom-input flex-1" placeholder="URL o sube un PDF a Supabase" />
+                      <input type="file" #cvFileInput accept=".pdf,.doc,.docx" style="display: none" (change)="onCvFileSelected($event)" />
+                      <button type="button" mat-stroked-button color="primary" (click)="cvFileInput.click()" [disabled]="isUploading()">
+                        <mat-icon>upload_file</mat-icon> {{ isUploading() ? 'Subiendo...' : 'Subir PDF' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button mat-raised-button color="primary" (click)="saveProfile()" [disabled]="isBusy()">
+                    <mat-icon>save</mat-icon> Guardar Información Personal
+                  </button>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+
+          <!-- TAB 4: DISEÑO Y COMPONENTES (COLORES, OPACIDAD, BLUR, BOTONES) -->
+          <mat-tab label="🎨 Diseño & Componentes">
+            <div class="tab-content">
+              <div class="editor-form">
+
+                <!-- 1. SECCIÓN: ARMONÍA DE COLORES & MODO OSCURO -->
+                <div class="section-card">
+                  <h4 class="section-heading">
+                    <mat-icon>palette</mat-icon> 1. Paleta de Colores & Armonía (Light / Dark)
+                  </h4>
+                  <p class="tab-subtitle">Personaliza los colores de marca con sincronización de alto contraste en modo oscuro.</p>
+
+                  <!-- Presets Rápidos de Color -->
+                  <div class="color-presets-row">
+                    <span class="preset-label">Temas Rápidos:</span>
+                    <button type="button" class="preset-pill azure" (click)="applyColorPreset('#3b82f6', '#8b5cf6')">💎 Azure</button>
+                    <button type="button" class="preset-pill violet" (click)="applyColorPreset('#8b5cf6', '#ec4899')">💜 Violet</button>
+                    <button type="button" class="preset-pill emerald" (click)="applyColorPreset('#10b981', '#06b6d4')">🍃 Emerald</button>
+                    <button type="button" class="preset-pill sunset" (click)="applyColorPreset('#f43f5e', '#fb923c')">🌅 Sunset</button>
+                    <button type="button" class="preset-pill amber" (click)="applyColorPreset('#f59e0b', '#ef4444')">⚡ Amber</button>
+                  </div>
+
+                  <div class="form-grid">
+                    <!-- Color Primario Light -->
+                    <div class="form-group">
+                      <label>Color Primario (Modo Claro)</label>
+                      <div class="color-picker-wrapper">
+                        <input
+                          type="color"
+                          [(ngModel)]="settingsForm.primary_color"
+                          (ngModelChange)="onPrimaryColorChange()"
+                          class="color-circle-input"
+                        />
+                        <input
+                          type="text"
+                          [(ngModel)]="settingsForm.primary_color"
+                          (ngModelChange)="onPrimaryColorChange()"
+                          class="custom-input hex-input"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Modo Contraparte Oscura -->
+                    <div class="form-group">
+                      <label>Cálculo de Contraparte Oscura</label>
+                      <mat-select
+                        [(ngModel)]="settingsForm.dark_counterpart_mode"
+                        (ngModelChange)="onCounterpartModeChange()"
+                        class="custom-select"
+                      >
+                        <mat-option value="auto">✨ Automático (Contraste Óptimo)</mat-option>
+                        <mat-option value="custom">🎨 Personalizado (Elegir Manualmente)</mat-option>
+                      </mat-select>
+                    </div>
+
+                    <!-- Color Primario Dark -->
+                    <div class="form-group">
+                      <label>Color Primario (Modo Oscuro)</label>
+                      <div class="color-picker-wrapper">
+                        <input
+                          type="color"
+                          [(ngModel)]="settingsForm.primary_dark_color"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          [disabled]="settingsForm.dark_counterpart_mode === 'auto'"
+                          class="color-circle-input"
+                        />
+                        <input
+                          type="text"
+                          [(ngModel)]="settingsForm.primary_dark_color"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          [disabled]="settingsForm.dark_counterpart_mode === 'auto'"
+                          class="custom-input hex-input"
+                        />
+                      </div>
+                      @if (settingsForm.dark_counterpart_mode === 'auto') {
+                        <small class="hint-text">Calculado automáticamente para máxima luminosidad y contraste</small>
+                      }
+                    </div>
+
+                    <!-- Color Secundario / Acento (Descargar CV & Badges) -->
+                    <div class="form-group">
+                      <label>Color de Acento / Descargar CV (Modo Claro)</label>
+                      <div class="color-picker-wrapper">
+                        <input
+                          type="color"
+                          [(ngModel)]="settingsForm.accent_color"
+                          (ngModelChange)="onAccentColorChange()"
+                          class="color-circle-input"
+                        />
+                        <input
+                          type="text"
+                          [(ngModel)]="settingsForm.accent_color"
+                          (ngModelChange)="onAccentColorChange()"
+                          class="custom-input hex-input"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Color Secundario / Acento Dark Mode -->
+                    <div class="form-group">
+                      <label>Color de Acento / Descargar CV (Modo Oscuro)</label>
+                      <div class="color-picker-wrapper">
+                        <input
+                          type="color"
+                          [(ngModel)]="settingsForm.accent_dark_color"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          [disabled]="settingsForm.dark_counterpart_mode === 'auto'"
+                          class="color-circle-input"
+                        />
+                        <input
+                          type="text"
+                          [(ngModel)]="settingsForm.accent_dark_color"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          [disabled]="settingsForm.dark_counterpart_mode === 'auto'"
+                          class="custom-input hex-input"
+                        />
+                      </div>
+                      @if (settingsForm.dark_counterpart_mode === 'auto') {
+                        <small class="hint-text">Calculado automáticamente para máxima armonía y contraste</small>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. SECCIÓN: TRANSPARENCIA Y DESENFOQUE (BLUR) POR COMPONENTE -->
+                <div class="section-card">
+                  <h4 class="section-heading">
+                    <mat-icon>opacity</mat-icon> 2. Transparencia, Desenfoque & Fondos por Componente
+                  </h4>
+                  <p class="tab-subtitle">Ajusta la opacidad (transparencia) y el nivel de desenfoque de cristal (backdrop-blur) de cada sección.</p>
+
+                  <!-- HEADER -->
+                  <div class="component-setting-block">
+                    <div class="comp-header">
+                      <mat-icon>view_headline</mat-icon>
+                      <strong>1. Barra de Navegación / Encabezado</strong>
+                    </div>
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label>Opacidad del Fondo ({{ ((settingsForm.header_opacity || 0.75) * 100) | number:'1.0-0' }}%)</label>
+                        <input
+                          type="range"
+                          min="0.0"
+                          max="1.0"
+                          step="0.05"
+                          [(ngModel)]="settingsForm.header_opacity"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Desenfoque Glass Blur ({{ settingsForm.header_blur }}px)</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="30"
+                          step="1"
+                          [(ngModel)]="settingsForm.header_blur"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Fondo Modo Claro</label>
+                        <div class="color-picker-wrapper">
+                          <input type="color" [(ngModel)]="settingsForm.header_bg_light" (ngModelChange)="onSettingsLiveChange()" class="color-circle-input" />
+                          <input type="text" [(ngModel)]="settingsForm.header_bg_light" (ngModelChange)="onSettingsLiveChange()" class="custom-input hex-input" />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label>Fondo Modo Oscuro</label>
+                        <div class="color-picker-wrapper">
+                          <input type="color" [(ngModel)]="settingsForm.header_bg_dark" (ngModelChange)="onSettingsLiveChange()" class="color-circle-input" />
+                          <input type="text" [(ngModel)]="settingsForm.header_bg_dark" (ngModelChange)="onSettingsLiveChange()" class="custom-input hex-input" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SKILLS CHIPS -->
+                  <div class="component-setting-block">
+                    <div class="comp-header">
+                      <mat-icon>category</mat-icon>
+                      <strong>2. Habilidades & Tecnologías (Chips)</strong>
+                    </div>
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label>Opacidad de los Chips ({{ ((settingsForm.skills_opacity || 0.50) * 100) | number:'1.0-0' }}%)</label>
+                        <input
+                          type="range"
+                          min="0.0"
+                          max="1.0"
+                          step="0.05"
+                          [(ngModel)]="settingsForm.skills_opacity"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Desenfoque Glass Blur ({{ settingsForm.skills_blur }}px)</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="30"
+                          step="1"
+                          [(ngModel)]="settingsForm.skills_blur"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Fondo Chips Modo Claro</label>
+                        <div class="color-picker-wrapper">
+                          <input type="color" [(ngModel)]="settingsForm.skills_bg_light" (ngModelChange)="onSettingsLiveChange()" class="color-circle-input" />
+                          <input type="text" [(ngModel)]="settingsForm.skills_bg_light" (ngModelChange)="onSettingsLiveChange()" class="custom-input hex-input" />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label>Fondo Chips Modo Oscuro</label>
+                        <div class="color-picker-wrapper">
+                          <input type="color" [(ngModel)]="settingsForm.skills_bg_dark" (ngModelChange)="onSettingsLiveChange()" class="color-circle-input" />
+                          <input type="text" [(ngModel)]="settingsForm.skills_bg_dark" (ngModelChange)="onSettingsLiveChange()" class="custom-input hex-input" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- PROJECTS CARDS -->
+                  <div class="component-setting-block">
+                    <div class="comp-header">
+                      <mat-icon>layers</mat-icon>
+                      <strong>3. Tarjetas de Proyectos (Cards)</strong>
+                    </div>
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label>Opacidad de las Tarjetas ({{ ((settingsForm.projects_opacity || 0.92) * 100) | number:'1.0-0' }}%)</label>
+                        <input
+                          type="range"
+                          min="0.1"
+                          max="1.0"
+                          step="0.05"
+                          [(ngModel)]="settingsForm.projects_opacity"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Desenfoque Glass Blur ({{ settingsForm.projects_blur }}px)</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="30"
+                          step="1"
+                          [(ngModel)]="settingsForm.projects_blur"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Elevación / Sombra</label>
+                        <mat-select
+                          [(ngModel)]="settingsForm.projects_elevation"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-select"
+                        >
+                          <mat-option value="low">Sutil / Baja</mat-option>
+                          <mat-option value="medium">Equilibrada / Media</mat-option>
+                          <mat-option value="high">Pronunciada / Alta</mat-option>
+                          <mat-option value="glow">Glow Neón Resplandor</mat-option>
+                        </mat-select>
+                      </div>
+                      <div class="form-group">
+                        <label>Fondo Tarjeta Claro</label>
+                        <div class="color-picker-wrapper">
+                          <input type="color" [(ngModel)]="settingsForm.projects_bg_light" (ngModelChange)="onSettingsLiveChange()" class="color-circle-input" />
+                          <input type="text" [(ngModel)]="settingsForm.projects_bg_light" (ngModelChange)="onSettingsLiveChange()" class="custom-input hex-input" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- FOOTER -->
+                  <div class="component-setting-block">
+                    <div class="comp-header">
+                      <mat-icon>web_asset</mat-icon>
+                      <strong>4. Pie de Página (Footer)</strong>
+                    </div>
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label>Opacidad del Footer ({{ ((settingsForm.footer_opacity || 0.65) * 100) | number:'1.0-0' }}%)</label>
+                        <input
+                          type="range"
+                          min="0.0"
+                          max="1.0"
+                          step="0.05"
+                          [(ngModel)]="settingsForm.footer_opacity"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Desenfoque Glass Blur ({{ settingsForm.footer_blur }}px)</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="30"
+                          step="1"
+                          [(ngModel)]="settingsForm.footer_blur"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Fondo Footer Claro</label>
+                        <div class="color-picker-wrapper">
+                          <input type="color" [(ngModel)]="settingsForm.footer_bg_light" (ngModelChange)="onSettingsLiveChange()" class="color-circle-input" />
+                          <input type="text" [(ngModel)]="settingsForm.footer_bg_light" (ngModelChange)="onSettingsLiveChange()" class="custom-input hex-input" />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label>Fondo Footer Oscuro</label>
+                        <div class="color-picker-wrapper">
+                          <input type="color" [(ngModel)]="settingsForm.footer_bg_dark" (ngModelChange)="onSettingsLiveChange()" class="color-circle-input" />
+                          <input type="text" [(ngModel)]="settingsForm.footer_bg_dark" (ngModelChange)="onSettingsLiveChange()" class="custom-input hex-input" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. SECCIÓN: ESTILO & EFECTOS DE BOTONES -->
+                <div class="section-card">
+                  <h4 class="section-heading">
+                    <mat-icon>touch_app</mat-icon> 3. Estilos y Efectos de Botones
+                  </h4>
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label>Estilo Visual de Botón</label>
+                      <mat-select
+                        [(ngModel)]="settingsForm.button_style"
+                        (ngModelChange)="onSettingsLiveChange()"
+                        class="custom-select"
+                      >
+                        <mat-option value="glow">✨ Resplandor / Glow Neón</mat-option>
+                        <mat-option value="glass">🪟 Glassmorphism Translúcido</mat-option>
+                        <mat-option value="gradient">🌈 Gradiente Moderno</mat-option>
+                        <mat-option value="classic">🎯 Clásico / Sólido</mat-option>
+                      </mat-select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Radio de Redondeo ({{ settingsForm.button_radius }}px)</label>
+                      <mat-select
+                        [(ngModel)]="settingsForm.button_radius"
+                        (ngModelChange)="onSettingsLiveChange()"
+                        class="custom-select"
+                      >
+                        <mat-option [value]="4">Sutil (4px)</mat-option>
+                        <mat-option [value]="8">Moderno (8px)</mat-option>
+                        <mat-option [value]="16">Suave (16px)</mat-option>
+                        <mat-option [value]="24">Píldora Completa (24px)</mat-option>
+                      </mat-select>
+                    </div>
+
+                    <!-- Vista Previa de Botones -->
+                    <div class="form-group full-width">
+                      <label>Vista Previa de Botones en Vivo</label>
+                      <div class="button-preview-box">
+                        <button type="button" mat-raised-button color="primary">
+                          <mat-icon>mail</mat-icon> Botón Primario
+                        </button>
+                        <button type="button" mat-raised-button color="accent" class="action-btn cv-btn">
+                          <mat-icon>picture_as_pdf</mat-icon> Descargar CV
+                        </button>
+                        <button type="button" mat-stroked-button color="primary">
+                          <mat-icon>code</mat-icon> Botón Outline
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- BOTONES DE ACCIÓN PERSISTENCIA & RESET -->
+                <div class="form-actions sticky-actions">
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    (click)="resetThemeDefaults()"
+                    class="reset-btn"
+                  >
+                    <mat-icon>restart_alt</mat-icon> Restaurar por Defecto
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="saveSettings()"
+                    [disabled]="isBusy()"
+                    class="save-settings-btn"
+                  >
+                    <mat-icon>cloud_done</mat-icon> Guardar Diseño en Supabase
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </mat-tab>
+
+          <!-- TAB 5: PERSONALIZADOR PARTICLE LOVE (SIMULATOR, RENDERING, POST-PROCESSING) -->
+          <mat-tab label="✨ Particle Love Studio">
+            <div class="tab-content">
+              <div class="editor-form">
+                <div class="section-card">
+                  <div class="form-group full-width">
+                    <label class="section-label">
+                      <mat-icon>wallpaper</mat-icon> Selector de Fondo Activo
+                    </label>
+                    <mat-select
+                      [(ngModel)]="settingsForm.active_background"
+                      (ngModelChange)="onSettingsLiveChange()"
+                      class="custom-select"
+                    >
+                      <mat-option value="particle-love">✨ Particle Love 3D (Three.js)</mat-option>
+                      <mat-option value="fluid-waves">🌊 Olas Fluidas CSS Gradient Blend</mat-option>
+                      <mat-option value="none">🚫 Ninguno (Fondo Limpio)</mat-option>
+                    </mat-select>
+                  </div>
+                </div>
+
+                @if (settingsForm.active_background === 'particle-love') {
+                  <!-- SECCIÓN 1: 🎮 SIMULADOR (7 OPCIONES) -->
+                  <div class="section-card">
+                    <h4 class="section-heading">
+                      <mat-icon>tune</mat-icon> 1. Simulador & Comportamiento Físico (7 Controles)
+                    </h4>
+
+                    <div class="form-grid">
+                      <!-- 1. Shape Preset (7 formas) -->
+                      <div class="form-group">
+                        <label>1. Forma / Preset 3D</label>
+                        <mat-select
+                          [(ngModel)]="settingsForm.particle_preset"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-select"
+                        >
+                          <mat-option value="heart">❤️ 1. Corazón 3D (Love)</mat-option>
+                          <mat-option value="galaxy">🌌 2. Galaxia Espiral</mat-option>
+                          <mat-option value="torus">🪐 3. Anillos Saturno / Torus</mat-option>
+                          <mat-option value="sphere">🔮 4. Esfera de Energía</mat-option>
+                          <mat-option value="helix">🧬 5. Hélice ADN / Twist</mat-option>
+                          <mat-option value="cube">🧊 6. Cubo Cuántico</mat-option>
+                          <mat-option value="wave">🌊 7. Campo de Ondas</mat-option>
+                        </mat-select>
+                      </div>
+
+                      <!-- 2. Interacción del Cursor -->
+                      <div class="form-group">
+                        <label>2. Interacción con el Cursor</label>
+                        <mat-select
+                          [(ngModel)]="settingsForm.interaction_mode"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-select"
+                        >
+                          <mat-option value="repel">💨 Repeler (Onda de Choque)</mat-option>
+                          <mat-option value="attract">🧲 Atraer (Gravedad)</mat-option>
+                          <mat-option value="orbit">🌀 Orbitar (Vórtice)</mat-option>
+                          <mat-option value="wave">🌊 Onda Expansiva</mat-option>
+                        </mat-select>
+                      </div>
+
+                      <!-- 3. Cantidad de Partículas -->
+                      <div class="form-group">
+                        <label>3. Cantidad de Partículas ({{ settingsForm.particle_count }})</label>
+                        <input
+                          type="range"
+                          min="1000"
+                          max="6000"
+                          step="250"
+                          [(ngModel)]="settingsForm.particle_count"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+
+                      <!-- 4. Velocidad de Simulación -->
+                      <div class="form-group">
+                        <label>4. Velocidad de Animación ({{ settingsForm.particle_speed }}x)</label>
+                        <input
+                          type="range"
+                          min="0.1"
+                          max="3.0"
+                          step="0.1"
+                          [(ngModel)]="settingsForm.particle_speed"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+
+                      <!-- 5. Radio / Escala 3D -->
+                      <div class="form-group">
+                        <label>5. Radio / Escala de la Figura ({{ settingsForm.particle_radius }}x)</label>
+                        <input
+                          type="range"
+                          min="0.5"
+                          max="2.5"
+                          step="0.1"
+                          [(ngModel)]="settingsForm.particle_radius"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+
+                      <!-- 6. Fuerza de Cohesión / Gravedad -->
+                      <div class="form-group">
+                        <label>6. Fuerza de Cohesión / Gravedad ({{ settingsForm.attraction_force }}x)</label>
+                        <input
+                          type="range"
+                          min="0.2"
+                          max="2.5"
+                          step="0.1"
+                          [(ngModel)]="settingsForm.attraction_force"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+
+                      <!-- 7. Fuerza del Cursor -->
+                      <div class="form-group full-width">
+                        <label>7. Potencia de la Fuerza del Cursor ({{ settingsForm.mouse_force }}x)</label>
+                        <input
+                          type="range"
+                          min="0.5"
+                          max="3.5"
+                          step="0.2"
+                          [(ngModel)]="settingsForm.mouse_force"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SECCIÓN 2: 🎨 RENDERIZADO (5 OPCIONES) -->
+                  <div class="section-card">
+                    <h4 class="section-heading">
+                      <mat-icon>brush</mat-icon> 2. Renderizado & Materiales (5 Controles)
+                    </h4>
+
+                    <div class="form-grid">
+                      <!-- 1. Modo de Blending -->
+                      <div class="form-group">
+                        <label>1. Modo de Blending (Fusión)</label>
+                        <mat-select
+                          [(ngModel)]="settingsForm.blending_mode"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-select"
+                        >
+                          <mat-option value="additive">✨ Additive Blending (Glow Luminoso)</mat-option>
+                          <mat-option value="normal">⚪ Normal Blending</mat-option>
+                        </mat-select>
+                      </div>
+
+                      <!-- 2. Textura / Forma del Punto -->
+                      <div class="form-group">
+                        <label>2. Textura / Forma del Punto</label>
+                        <mat-select
+                          [(ngModel)]="settingsForm.texture_shape"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-select"
+                        >
+                          <mat-option value="glow_circle">🌕 Círculo Difuminado (Glow)</mat-option>
+                          <mat-option value="sparkle">⭐ Estrella / Destello Sparkle</mat-option>
+                          <mat-option value="ring">⭕ Anillo Luminoso</mat-option>
+                          <mat-option value="diamond">💠 Rombo Cristalino</mat-option>
+                        </mat-select>
+                      </div>
+
+                      <!-- 3. Tamaño de Partícula -->
+                      <div class="form-group">
+                        <label>3. Tamaño de Partículas ({{ settingsForm.particle_size }}px)</label>
+                        <input
+                          type="range"
+                          min="1.0"
+                          max="7.0"
+                          step="0.2"
+                          [(ngModel)]="settingsForm.particle_size"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+
+                      <!-- 4. Opacidad / Alpha -->
+                      <div class="form-group">
+                        <label>4. Opacidad / Alpha ({{ settingsForm.particle_opacity }})</label>
+                        <input
+                          type="range"
+                          min="0.2"
+                          max="1.0"
+                          step="0.05"
+                          [(ngModel)]="settingsForm.particle_opacity"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+
+                      <!-- 5. Paleta de Color -->
+                      <div class="form-group full-width">
+                        <label>5. Paleta de Color & Shading</label>
+                        <mat-select
+                          [(ngModel)]="settingsForm.color_preset"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-select"
+                        >
+                          <mat-option value="system">🎨 Adaptar al Sistema (Azure / Dark Glow)</mat-option>
+                          <mat-option value="neon-cyan">💎 Cyberpunk (Cian Eléctrico & Esmeralda)</mat-option>
+                          <mat-option value="purple-pink">🔮 Sunset Neon (Púrpura & Rosa Cósmico)</mat-option>
+                          <mat-option value="golden">✨ Golden Flame (Oro Radiante & Fuego)</mat-option>
+                          <mat-option value="aurora">🌌 Aurora Boreal (Esmeralda & Cian Suave)</mat-option>
+                          <mat-option value="white-diamond">💠 Diamante Puro (Blanco & Plata)</mat-option>
+                        </mat-select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SECCIÓN 3: ✨ POST-PROCESSING & TURBULENCIA -->
+                  <div class="section-card">
+                    <h4 class="section-heading">
+                      <mat-icon>auto_awesome</mat-icon> 3. Post-Processing & Efectos Cinemáticos
+                    </h4>
+
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label>Turbulencia / Ruido 3D ({{ settingsForm.turbulence_noise }})</label>
+                        <input
+                          type="range"
+                          min="0.0"
+                          max="2.0"
+                          step="0.1"
+                          [(ngModel)]="settingsForm.turbulence_noise"
+                          (ngModelChange)="onSettingsLiveChange()"
+                          class="custom-range"
+                        />
+                      </div>
+
+                      <div class="form-group checkbox-group">
+                        <mat-checkbox
+                          [(ngModel)]="settingsForm.bloom_glow"
+                          (ngModelChange)="onSettingsLiveChange()"
+                        >
+                          Resplandor Bloom / Aura Etérea
+                        </mat-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                <div class="form-actions sticky-actions">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="saveSettings()"
+                    [disabled]="isBusy()"
+                    class="save-settings-btn"
+                  >
+                    <mat-icon>cloud_done</mat-icon> Guardar Configuración en Supabase
+                  </button>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+
+        </mat-tab-group>
+      }
+    </div>
+  </div>
+}
