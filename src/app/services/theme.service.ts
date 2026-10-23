@@ -22,15 +22,15 @@ export class ThemeService {
     const root = document.documentElement;
 
     // 1. Brand Colors & Counterparts
-    const primaryColor = settings.primary_color || '#3b82f6';
-    let primaryDarkColor = settings.primary_dark_color || '#38bdf8';
+    const primaryColor = settings.primary_color || '#0e4caf';
+    let primaryDarkColor = settings.primary_dark_color || '#609bfb';
     
     if (settings.dark_counterpart_mode === 'auto') {
       primaryDarkColor = calculateDarkCounterpart(primaryColor);
     }
 
-    const accentColor = settings.accent_color || '#8b5cf6';
-    let accentDarkColor = settings.accent_dark_color || '#a855f7';
+    const accentColor = settings.accent_color || '#609bfb';
+    let accentDarkColor = settings.accent_dark_color || '#70a7ff';
     if (settings.dark_counterpart_mode === 'auto') {
       accentDarkColor = calculateDarkCounterpart(accentColor);
     }
@@ -41,19 +41,19 @@ export class ThemeService {
     root.style.setProperty('--brand-accent-dark', accentDarkColor);
 
     // 2. Header
-    const headerOpacity = settings.header_opacity ?? 0.75;
-    const headerBlur = settings.header_blur ?? 14;
-    const headerBgLight = hexToRgba(settings.header_bg_light || '#fafaf9', headerOpacity);
-    const headerBgDark = hexToRgba(settings.header_bg_dark || '#0f172a', headerOpacity);
+    const headerOpacity = settings.header_opacity ?? 0.1;
+    const headerBlur = settings.header_blur ?? 15;
+    const headerBgLight = hexToRgba(settings.header_bg_light || '#94cfe6', headerOpacity);
+    const headerBgDark = hexToRgba(settings.header_bg_dark || '#1e293b', headerOpacity);
 
     root.style.setProperty('--header-bg-light', headerBgLight);
     root.style.setProperty('--header-bg-dark', headerBgDark);
     root.style.setProperty('--header-blur', `${headerBlur}px`);
 
     // 3. Skills Chips
-    const skillsOpacity = settings.skills_opacity ?? 0.50;
-    const skillsBlur = settings.skills_blur ?? 12;
-    const skillsBgLight = hexToRgba(settings.skills_bg_light || '#ffffff', skillsOpacity);
+    const skillsOpacity = settings.skills_opacity ?? 0.35;
+    const skillsBlur = settings.skills_blur ?? 9;
+    const skillsBgLight = hexToRgba(settings.skills_bg_light || '#94cfe6', skillsOpacity);
     const skillsBgDark = hexToRgba(settings.skills_bg_dark || '#1e293b', skillsOpacity);
 
     root.style.setProperty('--skills-chip-bg-light', skillsBgLight);
@@ -61,9 +61,9 @@ export class ThemeService {
     root.style.setProperty('--skills-chip-blur', `${skillsBlur}px`);
 
     // 4. Projects Cards
-    const projectsOpacity = settings.projects_opacity ?? 0.92;
-    const projectsBlur = settings.projects_blur ?? 8;
-    const projectsBgLight = hexToRgba(settings.projects_bg_light || '#ffffff', projectsOpacity);
+    const projectsOpacity = settings.projects_opacity ?? 0.35;
+    const projectsBlur = settings.projects_blur ?? 9;
+    const projectsBgLight = hexToRgba(settings.projects_bg_light || '#94cfe6', projectsOpacity);
     const projectsBgDark = hexToRgba(settings.projects_bg_dark || '#1e293b', projectsOpacity);
 
     let shadowLight = '0 4px 20px rgba(0, 0, 0, 0.08)';
@@ -88,8 +88,8 @@ export class ThemeService {
     // 5. Footer
     const footerOpacity = settings.footer_opacity ?? 0.65;
     const footerBlur = settings.footer_blur ?? 14;
-    const footerBgLight = hexToRgba(settings.footer_bg_light || '#f5f5f5', footerOpacity);
-    const footerBgDark = hexToRgba(settings.footer_bg_dark || '#0f172a', footerOpacity);
+    const footerBgLight = hexToRgba(settings.footer_bg_light || '#94cfe6', footerOpacity);
+    const footerBgDark = hexToRgba(settings.footer_bg_dark || '#1e293b', footerOpacity);
 
     root.style.setProperty('--footer-bg-light', footerBgLight);
     root.style.setProperty('--footer-bg-dark', footerBgDark);

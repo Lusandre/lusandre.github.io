@@ -69,7 +69,7 @@ export class ParticleBackground implements OnInit {
   private isHovered = false;
   private animId?: number;
   private time = 0;
-  private particleCount = 2500;
+  private particleCount = 5000;
   private currentTextureShape = 'glow_circle';
 
   constructor() {
@@ -111,7 +111,7 @@ export class ParticleBackground implements OnInit {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     const s = this.settings();
-    this.particleCount = Math.min(Math.max(s.particle_count || 2500, 1000), 6000);
+    this.particleCount = Math.min(Math.max(s.particle_count || 5000, 1000), 6000);
 
     this.currentPositions = new Float32Array(this.particleCount * 3);
     this.targetPositions = new Float32Array(this.particleCount * 3);
@@ -119,13 +119,13 @@ export class ParticleBackground implements OnInit {
     this.colors = new Float32Array(this.particleCount * 3);
     this.opacities = new Float32Array(this.particleCount);
 
-    this.generateShape(s.particle_preset || 'heart', this.targetPositions, s.particle_radius || 1.0);
+    this.generateShape(s.particle_preset || 'sphere', this.targetPositions, s.particle_radius || 2.4);
 
     for (let i = 0; i < this.particleCount * 3; i++) {
       this.currentPositions[i] = (Math.random() - 0.5) * 120;
     }
 
-    this.updateColors(s.color_preset || 'system');
+    this.updateColors(s.color_preset || 'aurora');
 
     this.geometry = new THREE.BufferGeometry();
     this.geometry.setAttribute('position', new THREE.BufferAttribute(this.currentPositions, 3));
@@ -135,10 +135,10 @@ export class ParticleBackground implements OnInit {
     const texture = this.createParticleTexture(this.currentTextureShape);
 
     this.material = new THREE.PointsMaterial({
-      size: s.particle_size || 2.8,
+      size: s.particle_size || 2.6,
       map: texture,
       transparent: true,
-      opacity: s.particle_opacity !== undefined ? s.particle_opacity : 0.85,
+      opacity: s.particle_opacity !== undefined ? s.particle_opacity : 0.3,
       vertexColors: true,
       blending: s.blending_mode === 'normal' ? THREE.NormalBlending : THREE.AdditiveBlending,
       depthWrite: false,
@@ -405,12 +405,12 @@ export class ParticleBackground implements OnInit {
   private applySettings(s: SiteSettings) {
     if (!this.geometry) return;
 
-    this.generateShape(s.particle_preset || 'heart', this.targetPositions, s.particle_radius || 1.0);
-    this.updateColors(s.color_preset || 'system');
+    this.generateShape(s.particle_preset || 'sphere', this.targetPositions, s.particle_radius || 2.4);
+    this.updateColors(s.color_preset || 'aurora');
 
     if (this.material) {
-      this.material.size = s.particle_size || 2.8;
-      this.material.opacity = s.particle_opacity !== undefined ? s.particle_opacity : 0.85;
+      this.material.size = s.particle_size || 2.6;
+      this.material.opacity = s.particle_opacity !== undefined ? s.particle_opacity : 0.3;
       this.material.blending = s.blending_mode === 'normal' ? THREE.NormalBlending : THREE.AdditiveBlending;
 
       if (s.texture_shape && s.texture_shape !== this.currentTextureShape) {

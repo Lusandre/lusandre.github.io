@@ -1,34 +1,34 @@
 @use '@angular/material' as mat;
 
 :root {
-  --brand-primary: #3b82f6;
-  --brand-primary-dark: #38bdf8;
-  --brand-accent: #8b5cf6;
-  --brand-accent-dark: #a855f7;
+  --brand-primary: #0e4caf;
+  --brand-primary-dark: #609bfb;
+  --brand-accent: #609bfb;
+  --brand-accent-dark: #70a7ff;
 
-  --header-bg-light: rgba(250, 250, 249, 0.75);
-  --header-bg-dark: rgba(15, 23, 42, 0.75);
-  --header-blur: 14px;
+  --header-bg-light: rgba(148, 207, 230, 0.1);
+  --header-bg-dark: rgba(30, 41, 59, 0.1);
+  --header-blur: 15px;
 
-  --skills-chip-bg-light: rgba(255, 255, 255, 0.50);
-  --skills-chip-bg-dark: rgba(30, 41, 59, 0.50);
-  --skills-chip-blur: 12px;
+  --skills-chip-bg-light: rgba(148, 207, 230, 0.35);
+  --skills-chip-bg-dark: rgba(30, 41, 59, 0.35);
+  --skills-chip-blur: 9px;
 
-  --projects-card-bg-light: rgba(255, 255, 255, 0.92);
-  --projects-card-bg-dark: rgba(30, 41, 59, 0.92);
-  --projects-card-blur: 8px;
+  --projects-card-bg-light: rgba(148, 207, 230, 0.35);
+  --projects-card-bg-dark: rgba(30, 41, 59, 0.35);
+  --projects-card-blur: 9px;
   --projects-card-shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
   --projects-card-shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.35);
 
-  --footer-bg-light: rgba(245, 245, 245, 0.65);
-  --footer-bg-dark: rgba(15, 23, 42, 0.65);
+  --footer-bg-light: rgba(148, 207, 230, 0.65);
+  --footer-bg-dark: rgba(30, 41, 59, 0.65);
   --footer-blur: 14px;
 
   --btn-border-radius: 8px;
-  --btn-glow-light: rgba(59, 130, 246, 0.4);
-  --btn-glow-dark: rgba(56, 189, 248, 0.5);
-  --btn-accent-glow-light: rgba(139, 92, 246, 0.45);
-  --btn-accent-glow-dark: rgba(168, 85, 247, 0.55);
+  --btn-glow-light: rgba(14, 76, 175, 0.4);
+  --btn-glow-dark: rgba(96, 155, 251, 0.5);
+  --btn-accent-glow-light: rgba(96, 155, 251, 0.45);
+  --btn-accent-glow-dark: rgba(112, 167, 255, 0.55);
 }
 
 html {

@@ -459,7 +459,9 @@ export class AdminPanel {
       this.errorMessage.set(res.error);
     } else {
       if (res.data) {
-        this.portfolioData.siteSettings.set(res.data);
+        this.portfolioData.updateSettingsLocally(res.data);
+      } else {
+        this.portfolioData.updateSettingsLocally(this.settingsForm);
       }
       this.successMessage.set('¡Configuración de fondo guardada con éxito en la base de datos!');
       setTimeout(() => this.successMessage.set(null), 3500);
